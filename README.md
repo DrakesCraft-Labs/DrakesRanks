@@ -1,29 +1,35 @@
 # DrakesRanks
 
-## Qué es
-Sistema ligero de rangos, permisos y formato de chat.
+Plugin de rangos y chat, extraido del modulo `drakesranks` del antiguo `DrakesCore`.
 
-## Arquitectura
-- `domain/` modelo `Rank`.
-- `manager/` lectura/escritura en `ranks.yml` y PermissionAttachment.
-- `listeners/` login/chat.
-- `integration/papi/` placeholders.
+## Objetivo
+Proveer un sistema ligero de rangos con permisos inyectados y formato de chat.
 
-## Hecho
-- `/rank set|create|permission add`.
-- Inyección de permisos al login/join.
-- Formato de chat con MiniMessage.
-- Placeholders PAPI: `%drakesranks_rank%`, `%drakesranks_prefix%`, `%drakesranks_suffix%`, `%drakesranks_color%`, `%drakesranks_weight%`.
+## Que hace hoy
+- Comandos:
+  - `/rank set <player> <rank>`
+  - `/rank create <name>`
+  - `/rank permission add <rank> <node>`
+- Carga/guarda rangos en `ranks.yml`.
+- Aplica permisos via `PermissionAttachment` en login/join.
+- Formatea chat en `AsyncChatEvent` (Paper).
+- Expone placeholders PAPI:
+  - `%drakesranks_rank%`
+  - `%drakesranks_prefix%`
+  - `%drakesranks_suffix%`
+  - `%drakesranks_color%`
+  - `%drakesranks_weight%`
 
-## Falta
-- Soporte de herencia entre rangos.
-- Almacenamiento en base de datos (opcional).
-- Editor GUI (opcional).
-
-## Configuración
-- `ranks.yml` con comentarios in-line.
+## Configuracion
+- `src/main/resources/ranks.yml`
+- Secciones: `ranks` y `players`.
 
 ## Dependencias
 - Paper 1.20.6
 - Java 21
 - PlaceholderAPI (opcional)
+
+## Pendiente real
+- Herencia de rangos.
+- Permisos temporales y expiracion.
+- Backend SQL para sincronizacion entre servidores.
