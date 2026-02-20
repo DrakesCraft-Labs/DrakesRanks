@@ -1,0 +1,27 @@
+# Sistema de rangos básico de DrakesRanks.
+# Cada rango puede tener prefijo/sufijo MiniMessage y permisos.
+
+ranks:
+  Member:
+    # Prefijo mostrado en chat/tab.
+    prefix: "<gray>[Member]</gray>"
+    # Sufijo opcional (puede estar vacío).
+    suffix: ""
+    # Color principal informativo del rango.
+    color: "<gray>"
+    # Peso (prioridad). Mayor = más alto.
+    weight: 0
+    # Lista de nodos de permiso que se aplican por PermissionAttachment.
+    permissions:
+      - "drakescore.use"
+
+  Admin:
+    prefix: "<gradient:red:gold>[Admin]</gradient>"
+    suffix: ""
+    color: "<red>"
+    weight: 100
+    permissions:
+      - "*"
+
+# Mapeo UUID -> rank-name (case-insensitive)
+players: {}

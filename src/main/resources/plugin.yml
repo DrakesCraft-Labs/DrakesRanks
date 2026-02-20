@@ -1,0 +1,16 @@
+name: DrakesRanks
+version: 1.0
+main: me.jackstar.drakesranks.DrakesRanksPlugin
+api-version: '1.20'
+authors: [JackStar]
+description: Lightweight ranks and chat for DrakesCraft
+softdepend: [PlaceholderAPI]
+commands:
+  rank:
+    description: Rank administration command
+    usage: /rank <set|create|permission>
+    permission: drakesranks.admin
+permissions:
+  drakesranks.admin:
+    description: Allows use of DrakesRanks admin command
+    default: op
