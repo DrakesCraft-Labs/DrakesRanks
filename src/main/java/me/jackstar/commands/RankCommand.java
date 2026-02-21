@@ -4,11 +4,15 @@ import me.jackstar.drakescraft.utils.MessageUtils;
 import me.jackstar.drakesranks.domain.Rank;
 import me.jackstar.drakesranks.manager.DrakesRanksManager;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+
+import java.nio.charset.StandardCharsets;
+import java.util.UUID;
 
 public class RankCommand implements CommandExecutor {
 
@@ -65,19 +69,23 @@ public class RankCommand implements CommandExecutor {
             return true;
         }
 
-        Player target = Bukkit.getPlayerExact(args[1]);
-        if (target == null) {
-            MessageUtils.send(sender, "<red>Player not found.</red>");
+        UUID targetUuid = resolveTargetUuid(args[1]);
+        if (targetUuid == null) {
+            MessageUtils.send(sender, "<red>Player not found. Join once or use exact name in offline mode.</red>");
             return true;
         }
-        if (!ranksManager.setPlayerRank(target.getUniqueId(), args[2])) {
+        if (!ranksManager.setPlayerRank(targetUuid, args[2])) {
             MessageUtils.send(sender, "<red>Unknown rank.</red>");
             return true;
         }
 
-        ranksManager.applyPermissions(target);
-        MessageUtils.send(sender, "<green>Rank updated.</green>");
-        MessageUtils.send(target, "<green>Your rank is now <yellow>" + args[2] + "</yellow>.</green>");
+        Player online = Bukkit.getPlayer(targetUuid);
+        if (online != null && online.isOnline()) {
+            ranksManager.applyPermissions(online);
+            MessageUtils.send(online, "<green>Your rank is now <yellow>" + args[2] + "</yellow>.</green>");
+        }
+
+        MessageUtils.send(sender, "<green>Rank updated for <yellow>" + args[1] + "</yellow>.</green>");
         return true;
     }
 
@@ -145,5 +153,23 @@ public class RankCommand implements CommandExecutor {
         MessageUtils.send(sender, "<yellow>/"+label+" list</yellow>");
         MessageUtils.send(sender, "<yellow>/"+label+" info <rank></yellow>");
         MessageUtils.send(sender, "<yellow>/"+label+" reload</yellow>");
+    }
+
+    private UUID resolveTargetUuid(String playerName) {
+        Player online = Bukkit.getPlayerExact(playerName);
+        if (online != null) {
+            return online.getUniqueId();
+        }
+
+        OfflinePlayer cached = Bukkit.getOfflinePlayerIfCached(playerName);
+        if (cached != null) {
+            return cached.getUniqueId();
+        }
+
+        if (!Bukkit.getOnlineMode()) {
+            return UUID.nameUUIDFromBytes(("OfflinePlayer:" + playerName).getBytes(StandardCharsets.UTF_8));
+        }
+
+        return null;
     }
 }

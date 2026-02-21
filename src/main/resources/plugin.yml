@@ -10,6 +10,7 @@ commands:
     description: Rank administration command
     usage: /rank <set|create|permission|list|info|reload>
     permission: drakesranks.admin
+    aliases: [drank, dranks]
 permissions:
   drakesranks.admin:
     description: Allows use of DrakesRanks admin command
