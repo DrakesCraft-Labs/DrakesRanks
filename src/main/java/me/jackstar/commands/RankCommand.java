@@ -1,6 +1,7 @@
 package me.jackstar.drakesranks.commands;
 
 import me.jackstar.drakescraft.utils.MessageUtils;
+import me.jackstar.drakesranks.domain.Rank;
 import me.jackstar.drakesranks.manager.DrakesRanksManager;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -38,6 +39,20 @@ public class RankCommand implements CommandExecutor {
         }
         if ("permission".equalsIgnoreCase(args[0])) {
             return handlePermission(sender, label, args);
+        }
+        if ("list".equalsIgnoreCase(args[0])) {
+            return handleList(sender);
+        }
+        if ("info".equalsIgnoreCase(args[0])) {
+            return handleInfo(sender, label, args);
+        }
+        if ("reload".equalsIgnoreCase(args[0])) {
+            ranksManager.reload();
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                ranksManager.applyPermissions(player);
+            }
+            MessageUtils.send(sender, "<green>DrakesRanks reloaded.</green>");
+            return true;
         }
 
         usage(sender, label);
@@ -92,9 +107,43 @@ public class RankCommand implements CommandExecutor {
         return true;
     }
 
+    private boolean handleList(CommandSender sender) {
+        MessageUtils.send(sender, "<yellow>Ranks by weight:</yellow>");
+        for (Rank rank : ranksManager.getRanksSortedByWeight()) {
+            MessageUtils.send(sender, "<gray>-</gray> <yellow>" + rank.getName() + "</yellow> <gray>(weight "
+                    + rank.getWeight() + ", nodes " + rank.getPermissionNodes().size() + ")</gray>");
+        }
+        MessageUtils.send(sender, "<gray>Default rank key:</gray> <aqua>" + ranksManager.getDefaultRankKey() + "</aqua>");
+        return true;
+    }
+
+    private boolean handleInfo(CommandSender sender, String label, String[] args) {
+        if (args.length < 2) {
+            MessageUtils.send(sender, "<red>Usage: /" + label + " info <rank></red>");
+            return true;
+        }
+
+        Rank rank = ranksManager.findRank(args[1]).orElse(null);
+        if (rank == null) {
+            MessageUtils.send(sender, "<red>Unknown rank.</red>");
+            return true;
+        }
+
+        MessageUtils.send(sender, "<yellow>Rank info:</yellow> <aqua>" + rank.getName() + "</aqua>");
+        MessageUtils.send(sender, "<gray>Weight:</gray> <aqua>" + rank.getWeight() + "</aqua>");
+        MessageUtils.send(sender, "<gray>Prefix:</gray> " + rank.getPrefix());
+        MessageUtils.send(sender, "<gray>Suffix:</gray> " + rank.getSuffix());
+        MessageUtils.send(sender, "<gray>Color:</gray> " + rank.getColor());
+        MessageUtils.send(sender, "<gray>Permissions:</gray> <aqua>" + String.join(", ", rank.getPermissionNodes()) + "</aqua>");
+        return true;
+    }
+
     private void usage(CommandSender sender, String label) {
         MessageUtils.send(sender, "<yellow>/"+label+" set <player> <rank></yellow>");
         MessageUtils.send(sender, "<yellow>/"+label+" create <name></yellow>");
         MessageUtils.send(sender, "<yellow>/"+label+" permission add <rank> <node></yellow>");
+        MessageUtils.send(sender, "<yellow>/"+label+" list</yellow>");
+        MessageUtils.send(sender, "<yellow>/"+label+" info <rank></yellow>");
+        MessageUtils.send(sender, "<yellow>/"+label+" reload</yellow>");
     }
 }

@@ -10,7 +10,11 @@ Proveer un sistema ligero de rangos con permisos inyectados y formato de chat.
   - `/rank set <player> <rank>`
   - `/rank create <name>`
   - `/rank permission add <rank> <node>`
+  - `/rank list`
+  - `/rank info <rank>`
+  - `/rank reload`
 - Carga/guarda rangos en `ranks.yml`.
+- Fallback deterministico por `default-rank` en config.
 - Aplica permisos via `PermissionAttachment` en login/join.
 - Formatea chat en `AsyncChatEvent` (Paper).
 - Expone placeholders PAPI:

@@ -8,7 +8,7 @@ softdepend: [PlaceholderAPI]
 commands:
   rank:
     description: Rank administration command
-    usage: /rank <set|create|permission>
+    usage: /rank <set|create|permission|list|info|reload>
     permission: drakesranks.admin
 permissions:
   drakesranks.admin:

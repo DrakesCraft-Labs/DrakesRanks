@@ -16,6 +16,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class DrakesRanksManager {
 
@@ -24,6 +25,7 @@ public class DrakesRanksManager {
     private final Map<UUID, String> playerRanks = new HashMap<>();
     private final Map<UUID, PermissionAttachment> attachments = new HashMap<>();
     private final File file;
+    private String defaultRankKey = "member";
 
     public DrakesRanksManager(JavaPlugin plugin) {
         this.plugin = plugin;
@@ -50,6 +52,16 @@ public class DrakesRanksManager {
             }
         }
 
+        String configuredDefault = normalize(config.getString("default-rank", "member"));
+        defaultRankKey = configuredDefault != null ? configuredDefault : "member";
+        if (!ranks.containsKey(defaultRankKey) && !ranks.isEmpty()) {
+            defaultRankKey = ranks.values().stream()
+                    .sorted((a, b) -> Integer.compare(a.getWeight(), b.getWeight()))
+                    .map(rank -> normalize(rank.getName()))
+                    .findFirst()
+                    .orElse("member");
+        }
+
         ConfigurationSection playersSection = config.getConfigurationSection("players");
         if (playersSection != null) {
             for (String uuid : playersSection.getKeys(false)) {
@@ -63,6 +75,8 @@ public class DrakesRanksManager {
 
     public void save() {
         YamlConfiguration config = new YamlConfiguration();
+        Rank defaultRank = ranks.get(defaultRankKey);
+        config.set("default-rank", defaultRank != null ? defaultRank.getName() : "Member");
         for (Rank rank : ranks.values()) {
             String path = "ranks." + rank.getName();
             config.set(path + ".prefix", rank.getPrefix());
@@ -90,12 +104,21 @@ public class DrakesRanksManager {
         return new ArrayList<>(ranks.values());
     }
 
+    public List<Rank> getRanksSortedByWeight() {
+        return ranks.values().stream()
+                .sorted((a, b) -> Integer.compare(b.getWeight(), a.getWeight()))
+                .collect(Collectors.toList());
+    }
+
     public boolean createRank(String rankName) {
         String key = normalize(rankName);
         if (key == null || ranks.containsKey(key)) {
             return false;
         }
         ranks.put(key, new Rank(rankName, "<gray>[Member]</gray>", "", "<gray>", 0, List.of()));
+        if (ranks.size() == 1) {
+            defaultRankKey = key;
+        }
         save();
         return true;
     }
@@ -122,8 +145,14 @@ public class DrakesRanksManager {
     }
 
     public Rank getPlayerRank(Player player) {
-        String rankKey = playerRanks.getOrDefault(player.getUniqueId(), "member");
-        return ranks.getOrDefault(rankKey, ranks.values().stream().findFirst()
+        String rankKey = playerRanks.get(player.getUniqueId());
+        if (rankKey == null || !ranks.containsKey(rankKey)) {
+            rankKey = defaultRankKey;
+        }
+
+        return ranks.getOrDefault(rankKey, ranks.values().stream()
+                .sorted((a, b) -> Integer.compare(a.getWeight(), b.getWeight()))
+                .findFirst()
                 .orElse(new Rank("Member", "<gray>[Member]</gray>", "", "<gray>", 0, List.of())));
     }
 
@@ -144,6 +173,10 @@ public class DrakesRanksManager {
         }
     }
 
+    public String getDefaultRankKey() {
+        return defaultRankKey;
+    }
+
     private String normalize(String value) {
         if (value == null) {
             return null;
@@ -153,7 +186,7 @@ public class DrakesRanksManager {
     }
 
     private void saveDefaultFile() {
-        if (plugin.getResource("ranks.yml") != null) {
+        if (!file.exists() && plugin.getResource("ranks.yml") != null) {
             plugin.saveResource("ranks.yml", false);
             return;
         }

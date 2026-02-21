@@ -1,17 +1,25 @@
-# Sistema de rangos básico de DrakesRanks.
-# Cada rango puede tener prefijo/sufijo MiniMessage y permisos.
+# DrakesRanks main config.
+# Defines rank metadata, permissions, and player->rank assignment.
+
+# Rank assigned when player has no explicit mapping in `players`.
+# [DANGER] This value must match an existing key under `ranks`.
+default-rank: Member
 
 ranks:
   Member:
-    # Prefijo mostrado en chat/tab.
+    # Prefix shown in chat/tab (MiniMessage).
     prefix: "<gray>[Member]</gray>"
-    # Sufijo opcional (puede estar vacío).
+
+    # Optional suffix.
     suffix: ""
-    # Color principal informativo del rango.
+
+    # Informative color token for integrations.
     color: "<gray>"
-    # Peso (prioridad). Mayor = más alto.
+
+    # Weight priority. Higher = stronger rank.
     weight: 0
-    # Lista de nodos de permiso que se aplican por PermissionAttachment.
+
+    # Permission nodes injected through PermissionAttachment.
     permissions:
       - "drakescore.use"
 
@@ -21,7 +29,8 @@ ranks:
     color: "<red>"
     weight: 100
     permissions:
+      # [DANGER] Wildcard gives full permission graph.
       - "*"
 
-# Mapeo UUID -> rank-name (case-insensitive)
+# UUID -> rank-name map (case-insensitive rank matching).
 players: {}
