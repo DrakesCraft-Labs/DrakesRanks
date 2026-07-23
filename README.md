@@ -1,9 +1,9 @@
 # DrakesRanks
 
-Plugin de rangos y chat, extraido del modulo `drakesranks` del antiguo `DrakesCore`.
+Plugin de ranks y chat, extraido del modulo `drakesranks` del antiguo `DrakesCore`.
 
 ## Objetivo
-Proveer un sistema ligero de rangos con permisos inyectados y formato de chat.
+Proveer un sistema ligero de ranks con permissions inyectados y formato de chat.
 
 ## Que hace hoy
 - Comandos:
@@ -13,9 +13,9 @@ Proveer un sistema ligero de rangos con permisos inyectados y formato de chat.
   - `/rank list`
   - `/rank info <rank>`
   - `/rank reload`
-- Carga/guarda rangos en `ranks.yml`.
+- Carga/guarda ranks en `ranks.yml`.
 - Fallback deterministico por `default-rank` en config.
-- Aplica permisos via `PermissionAttachment` en login/join.
+- Aplica permissions via `PermissionAttachment` en login/join.
 - Formatea chat en `AsyncChatEvent` (Paper).
 - Expone placeholders PAPI:
   - `%drakesranks_rank%`
@@ -34,6 +34,6 @@ Proveer un sistema ligero de rangos con permisos inyectados y formato de chat.
 - PlaceholderAPI (opcional)
 
 ## Pendiente real
-- Herencia de rangos.
+- Herencia de ranks.
 - Permisos temporales y expiracion.
 - Backend SQL para sincronizacion entre servidores.
