@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="https://raw.githubusercontent.com/DrakesCraft-Labs/DrakesRanks/master/banner.svg" width="100%" alt="DRAKES RANKS animated banner" />
+</p>
+
 # DrakesRanks
 
 Plugin de rangos y chat, extraido del modulo `drakesranks` del antiguo `DrakesCore`.
@@ -37,3 +41,4 @@ Proveer un sistema ligero de rangos con permisos inyectados y formato de chat.
 - Herencia de rangos.
 - Permisos temporales y expiracion.
 - Backend SQL para sincronizacion entre servidores.
+
